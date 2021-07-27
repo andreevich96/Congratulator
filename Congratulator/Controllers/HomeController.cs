@@ -41,9 +41,9 @@ namespace Congratulator.Controllers
         public async Task<IActionResult> Index(string relation,
             string name,
             int page = 1,
-            SortState? sortOrder =null)
+            SortState? sortOrder = null)
         {
-            _relation = string.IsNullOrWhiteSpace(relation) || relation == "Все"
+            _relation = string.IsNullOrWhiteSpace(relation) || relation.Contains("Все")
                 ? _relation
                 : relation;
             _name = name;
