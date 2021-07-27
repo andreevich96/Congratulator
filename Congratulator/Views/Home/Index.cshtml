@@ -1,0 +1,92 @@
+﻿
+@using Network.Core.Shared.Entities
+@using Network.Core.ViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Главная страница";
+    string hasPreviousPage = Model.PageViewModel.HasPreviousPage ? "" : "disabled";
+    string hasNextPage = Model.PageViewModel.HasNextPage ? "" : "disabled";
+}
+<p>
+    <a asp-action="Create">Добавить новое событие</a>
+</p>
+
+<style>
+    table {
+        width: 100%; /* Ширина таблицы */
+        background: white; /* Цвет фона таблицы */
+        color: black; /* Цвет текста */
+        border-spacing: 1px; /* Расстояние между ячейками */
+    }
+
+    td {
+        background: LightCyan; /* Цвет фона ячеек */
+        padding: 5px; /* Поля вокруг текста */
+    }
+
+    th {
+        background: DeepSkyBlue; /* Цвет фона ячеек */
+        padding: 5px; /* Поля вокруг текста */
+    }
+</style>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Фото именинника</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.DateOfBirthSort">
+                    Дата рождения
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.NameSort">
+                    ФИО
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.RelationshipSort">
+                    Статус отношений
+                </a>
+            </th>
+            <th>Заметка</th>
+            <th>Инструменты</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var birthday in Model.Birthdays)
+        {
+            <tr>
+                <td>
+                    @if ((birthday.Photo) == null)
+                    {
+                        <img src="@("~/image/avatar.jpg")" asp-append-version="true" width="100px" height="100px" />
+                    }
+                    else
+                    {<img src="@("~/image/" + birthday.Photo)" asp-append-version="true" width="100px" height="100px" />}
+                </td>
+
+                <td>@birthday.DateOfBirth.ToLongDateString()</td>
+                <td>@birthday.Name</td>
+                <td>@birthday.Relationship</td>
+                <td>@birthday.Note</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@birthday.Id">Редактировать</a> <br />
+                    <a asp-action="Delete" asp-route-id="@birthday.Id">Удалить</a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+<a asp-action="Index"
+   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+   class="btn btn-outline-dark @hasPreviousPage">
+    < Назад
+</a>
+
+<a asp-action="Index"
+   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+   class="btn btn-outline-dark @hasNextPage">
+    Вперед >
+</a>
+
