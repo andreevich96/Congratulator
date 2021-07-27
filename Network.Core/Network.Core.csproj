@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Network.Core.Shared\Network.Core.Shared.csproj" />
+    <ProjectReference Include="..\Network.Infrastructure\Network.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

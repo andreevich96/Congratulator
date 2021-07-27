@@ -22,6 +22,11 @@ namespace Congratulator.Controllers
         private ApplicationDbContext _db;
         private readonly IWebHostEnvironment _hostEnvironment;
 
+        private static string _relation;
+        private static string _name;
+        private static int _page;
+        private static SortState _sortOrder = SortState.DateOfBirthAsc;
+
         public HomeController(ILogger<HomeController> logger
             , BirthdaysService birthdaysService
             , ApplicationDbContext context
@@ -33,35 +38,72 @@ namespace Congratulator.Controllers
             _hostEnvironment = hostEnvironment;
         }
         [HttpGet]
-        public async Task<IActionResult> Index(SortState sortOrder = SortState.DateOfBirthAsc, int page = 1 )
+        public async Task<IActionResult> Index(string relation,
+            string name,
+            int page = 1,
+            SortState? sortOrder =null)
         {
-            int pageSize = 10;
-            IQueryable<Birthday> birthdays = _db.Birthdays;
-            var count = await birthdays.CountAsync();
-            var items = await birthdays.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            _relation = string.IsNullOrWhiteSpace(relation) || relation == "Все"
+                ? _relation
+                : relation;
+            _name = name;
 
-            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            _page = page == 1 && page == 0
+                ? _page
+                : page;
+
+            _sortOrder = !sortOrder.HasValue
+                ? _sortOrder
+                : sortOrder.Value;
+
+            int pageSize = 10;
+
+            IQueryable<Birthday> birthdays = _db.Birthdays;
+            
+
+            if (birthdays != null && !string.IsNullOrWhiteSpace(_relation))
+            {
+                birthdays = birthdays.Where(p => p.Relationship == _relation);
+            }
+            if (!String.IsNullOrEmpty(_name))
+            {
+                birthdays = birthdays.Where(p => p.Name.Contains(_name));
+            }
+
+            switch (_sortOrder)
+            {
+                case SortState.DateOfBirthDesc:
+                    birthdays = birthdays.OrderByDescending(s => s.DateOfBirth.Month).ThenByDescending(s => s.DateOfBirth.Day);
+                    break;
+                case SortState.NameAsc:
+                    birthdays = birthdays.OrderBy(s => s.Name);
+                    break;
+                case SortState.NameDesc:
+                    birthdays = birthdays.OrderByDescending(s => s.Name);
+                    break;
+                case SortState.RelationshipAsc:
+                    birthdays = birthdays.OrderBy(s => s.Relationship);
+                    break;
+                case SortState.RelationshipDesc:
+                    birthdays = birthdays.OrderByDescending(s => s.Relationship);
+                    break;
+                default:
+                    birthdays = birthdays.OrderBy(x => x.DateOfBirth.Month).ThenBy(x => x.DateOfBirth.Day);
+                    break;
+            }
+
+
+            var count = await birthdays.CountAsync();
+            birthdays = birthdays.Skip((_page - 1) * pageSize).Take(pageSize);
+
             IndexViewModel viewModel = new IndexViewModel
             {
-                PageViewModel = pageViewModel,
-                Birthdays = items
+                PageViewModel = new PageViewModel(count, _page, pageSize),
+                SortViewModel = new SortViewModel(_sortOrder),
+                FilterViewModel = new FilterViewModel(_db.Birthdays.ToList(), _relation, _name),
+                Birthdays = await birthdays.ToListAsync()
             };
-
-            //IQueryable<Birthday> birthdays = _db.Birthdays;
-            ViewData["DateOfBirthSort"] = sortOrder == SortState.DateOfBirthAsc ? SortState.DateOfBirthDesc : SortState.DateOfBirthAsc;
-            ViewData["NameSort"] = sortOrder == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
-            ViewData["RelationshipSort"] = sortOrder == SortState.RelationshipAsc ? SortState.RelationshipDesc : SortState.RelationshipAsc;
-
-            viewModel.Birthdays = sortOrder switch
-            {
-                SortState.DateOfBirthDesc => viewModel.Birthdays.OrderByDescending(s => s.DateOfBirth),
-                SortState.NameAsc => viewModel.Birthdays.OrderBy(s => s.Name),
-                SortState.NameDesc => viewModel.Birthdays.OrderByDescending(s => s.Name),
-                SortState.RelationshipAsc => viewModel.Birthdays.OrderBy(s => s.Relationship),
-                SortState.RelationshipDesc => viewModel.Birthdays.OrderByDescending(s => s.Relationship),
-                _ => viewModel.Birthdays.OrderBy(s => s.DateOfBirth),
-            };
-            return View(viewModel); 
+            return View(viewModel);
         }
 
         public IActionResult Create()

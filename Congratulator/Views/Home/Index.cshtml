@@ -7,9 +7,6 @@
     string hasPreviousPage = Model.PageViewModel.HasPreviousPage ? "" : "disabled";
     string hasNextPage = Model.PageViewModel.HasNextPage ? "" : "disabled";
 }
-<p>
-    <a asp-action="Create">Добавить новое событие</a>
-</p>
 
 <style>
     table {
@@ -29,64 +26,78 @@
         padding: 5px; /* Поля вокруг текста */
     }
 </style>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Фото именинника</th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewBag.DateOfBirthSort">
-                    Дата рождения
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewBag.NameSort">
-                    ФИО
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewBag.RelationshipSort">
-                    Статус отношений
-                </a>
-            </th>
-            <th>Заметка</th>
-            <th>Инструменты</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var birthday in Model.Birthdays)
-        {
+<p>
+    <a asp-action="Create">Добавить новое событие</a>
+</p>
+<form method="get">
+    <div class="form-inline">
+        <label>Имя: </label>
+        <input name="name" value="@Model.FilterViewModel.SelectedName" class="form-control" />
+
+        <label>Статус: </label>
+        <select name="relation" asp-items="Model.FilterViewModel.Birthdays" class="form-control"></select>
+
+        <input type="submit" value="Фильтр" class="btn btn-outline-dark" />
+    </div>
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @if ((birthday.Photo) == null)
-                    {
-                        <img src="@("~/image/avatar.jpg")" asp-append-version="true" width="100px" height="100px" />
-                    }
-                    else
-                    {<img src="@("~/image/" + birthday.Photo)" asp-append-version="true" width="100px" height="100px" />}
-                </td>
-
-                <td>@birthday.DateOfBirth.ToLongDateString()</td>
-                <td>@birthday.Name</td>
-                <td>@birthday.Relationship</td>
-                <td>@birthday.Note</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@birthday.Id">Редактировать</a> <br />
-                    <a asp-action="Delete" asp-route-id="@birthday.Id">Удалить</a>
-                </td>
+                <th>Фото именинника</th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.DateOfBirthSort)">
+                        Дата рождения
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.NameSort)">
+                        ФИО
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.RelationshipSort)">
+                        Статус
+                    </a>
+                </th>
+                <th>Заметка</th>
+                <th>Инструменты</th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var birthday in Model.Birthdays)
+            {
+                <tr>
+                    <td>
+                        @if ((birthday.Photo) == null)
+                        {
+                            <img src="@("~/image/avatar.jpg")" asp-append-version="true" width="100px" height="100px" />
+                        }
+                        else
+                        {<img src="@("~/image/" + birthday.Photo)" asp-append-version="true" width="100px" height="100px" />}
+                    </td>
 
-        }
-    </tbody>
-</table>
-<a asp-action="Index"
-   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
-   class="btn btn-outline-dark @hasPreviousPage">
-    < Назад
-</a>
+                    <td>@birthday.DateOfBirth.ToLongDateString()</td>
+                    <td>@birthday.Name</td>
+                    <td>@birthday.Relationship</td>
+                    <td>@birthday.Note</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@birthday.Id">Редактировать</a> <br />
+                        <a asp-action="Delete" asp-route-id="@birthday.Id">Удалить</a>
+                    </td>
+                </tr>
 
-<a asp-action="Index"
-   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
-   class="btn btn-outline-dark @hasNextPage">
-    Вперед >
-</a>
+            }
+        </tbody>
+    </table>
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-outline-dark @hasPreviousPage">
+        < Назад
+    </a>
 
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-outline-dark @hasNextPage">
+        Вперед >
+    </a>
+</form>
