@@ -35,8 +35,6 @@ namespace Congratulator
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseMigrationsEndPoint();
-
             }
             else
             {

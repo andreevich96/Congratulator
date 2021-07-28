@@ -7,30 +7,31 @@
 
 <form asp-action="create" asp-controller="home" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="ImageFile" class=" control-label">Выберете фото</label>
-        <input asp-for="ImageFile" accept="image/png,image/jpg,image/jpeg,image/ICO" />
-        <span asp-validation-for="ImageFile" class=" text-danger"></span>
-    </div>
-    <div class=" form-group">
+    
+        <div class="form-group">
+            <label asp-for="ImageFile" class=" control-label">Выберете фото</label>
+            <input asp-for="ImageFile" accept="image/png,image/jpg,image/jpeg,image/ICO" />
+            <span asp-validation-for="ImageFile" class=" text-danger"></span>
+        </div>
+        <div class=" form-group">
             <label asp-for="DateOfBirth" class="control-label">Дата рождения</label>
             <input type="date" asp-for="DateOfBirth" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label">Фамилия и инициалы</label>
-        <input type="text" asp-for="Name" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Relationship" class="control-label">Статус отношений (друг, коллега, родственник)</label>
-        <input type="text" asp-for="Relationship" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Note" class="control-label">Заметка</label>
-        <input type="text" asp-for="Note" class="form-control" />
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Отправить" class="btn btn-default" />
-    </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Name" class="control-label">Фамилия и инициалы</label>
+            <input type="text" asp-for="Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Relationship" class="control-label">Статус отношений (друг, коллега, родственник)</label>
+            <input type="text" asp-for="Relationship" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Note" class="control-label">Заметка</label>
+            <input type="text" asp-for="Note" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Отправить" class="btn btn-default" />
+        </div>
 </form>
 
 

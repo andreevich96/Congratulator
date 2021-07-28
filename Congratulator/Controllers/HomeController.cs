@@ -59,7 +59,7 @@ namespace Congratulator.Controllers
             int pageSize = 10;
 
             IQueryable<Birthday> birthdays = _db.Birthdays;
-            
+
 
             if (birthdays != null && !string.IsNullOrWhiteSpace(_relation))
             {
@@ -160,7 +160,7 @@ namespace Congratulator.Controllers
                     {
                         await birthday.ImageFile.CopyToAsync(filestream);
                     };
-                }
+                }              
                 _db.Birthdays.Update(birthday);
                 await _db.SaveChangesAsync();
             }
